@@ -13,6 +13,8 @@
             --neon-green: #05ffa1;
             --neon-purple: #b967ff;
             --background-dark: #01012b;
+            --popup-background: #1a1a2e;
+            --popup-border: #0f3460;
         }
 
         * {
@@ -29,6 +31,7 @@
             overflow-x: hidden;
             min-height: 100vh;
             perspective: 1000px;
+            transition: filter 0.3s ease;
         }
 
         .background-container {
@@ -155,14 +158,13 @@
         }
 
         .interactive-elements {
-            position: fixed;
-            bottom: 20px;
-            left: 0;
+            position: relative;
             width: 100%;
             display: flex;
             justify-content: center;
             gap: 20px;
             padding: 20px;
+            margin-top: 100vh; /* Ensure buttons require scrolling */
             z-index: 1;
         }
 
@@ -182,24 +184,6 @@
         .interactive-button:hover {
             background: var(--neon-blue);
             box-shadow: 0 0 20px var(--neon-blue);
-        }
-
-        .video-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 100px 20px 50px 20px;
-            z-index: 1;
-        }
-
-        .video-container iframe {
-            width: 80%;
-            max-width: 800px;
-            height: 450px;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 0 20px var(--neon-blue);
-            transition: filter 0.3s ease;
         }
 
         .tilt-box {
@@ -233,15 +217,17 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: var(--background-dark);
+            background: var(--popup-background);
             padding: 30px;
-            border: 2px solid var(--neon-blue);
+            border: 2px solid var(--popup-border);
             border-radius: 10px;
             box-shadow: 0 0 20px var(--neon-blue);
             display: none;
             z-index: 1001;
-            width: 80%;
-            max-width: 500px;
+            width: 90%;
+            max-width: 600px;
+            overflow-y: auto;
+            max-height: 90vh;
         }
 
         .popup.active {
@@ -258,7 +244,7 @@
 
         .popup-header h2 {
             margin: 0;
-            font-size: 1.5em;
+            font-size: 1.8em;
             color: var(--neon-blue);
         }
 
@@ -266,13 +252,78 @@
             background: none;
             border: none;
             color: var(--neon-pink);
-            font-size: 1.5em;
+            font-size: 2em;
             cursor: pointer;
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translate(-50%, -60%); }
             to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .popup-content {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        /* Contact Form Styles */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 10px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 5px;
+            background: transparent;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder {
+            color: #aaa;
+        }
+
+        .contact-form button {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: var(--neon-blue);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            background: var(--neon-purple);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .company-name {
+                font-size: min(10vw, 60px);
+            }
+
+            .tagline {
+                font-size: min(5vw, 20px);
+            }
+
+            .interactive-button {
+                padding: 12px 25px;
+                font-size: 0.9em;
+            }
+
+            .popup-header h2 {
+                font-size: 1.5em;
+            }
         }
     </style>
 </head>
@@ -288,10 +339,6 @@
         </div>
     </div>
 
-    <div class="video-container">
-        <iframe id="promoVideo" src="https://www.youtube.com/embed/bxSvG2s8e-o?enablejsapi=1" title="Promotional Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-
     <div class="interactive-elements">
         <a href="#our-mission" class="interactive-button" id="ourMissionButton">Our Mission</a>
         <a href="#free-consultation" class="interactive-button" id="freeConsultationButton">Free Consultation</a>
@@ -303,7 +350,12 @@
             <h2>Our Mission</h2>
             <button class="close-popup" id="closeMissionPopup">&times;</button>
         </div>
-        <p>At Clear Seas Solutions, our mission is to provide innovative AI solutions that empower businesses to achieve their goals efficiently and effectively. We strive to level the playing field by making cutting-edge technology accessible to all.</p>
+        <div class="popup-content">
+            <p>At Clear Seas Solutions, our mission is to provide innovative AI solutions that empower businesses to achieve their goals efficiently and effectively. We strive to level the playing field by making cutting-edge technology accessible to all.</p>
+            <div class="video-container">
+                <iframe id="missionVideo" src="https://www.youtube.com/embed/bxSvG2s8e-o?enablejsapi=1" title="Our Mission Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
     </div>
 
     <!-- Popup for Free Consultation -->
@@ -312,8 +364,15 @@
             <h2>Free Consultation</h2>
             <button class="close-popup" id="closeConsultationPopup">&times;</button>
         </div>
-        <p>Interested in our services? Schedule a free consultation with our experts to discuss how Clear Seas Solutions can help your business thrive.</p>
-        <!-- You can add a form here -->
+        <div class="popup-content">
+            <p>Interested in our services? Schedule a free consultation with our experts to discuss how Clear Seas Solutions can help your business thrive. We will respond ASAP to help identify the best strategy for using AI resources aligned with your business goals and industry placement.</p>
+            <form class="contact-form" id="consultationForm">
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+                <textarea id="message" name="message" rows="4" placeholder="Your Message" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
     </div>
 
     <div class="touch-indicator"></div>
@@ -384,7 +443,6 @@
         // Scroll-based background color shift
         let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
-            const scrollDelta = window.scrollY - lastScrollY;
             const hue = (window.scrollY % 360);
             document.querySelector('.background-container')
                 .style.filter = `hue-rotate(${hue}deg)`;
@@ -394,27 +452,36 @@
         // Interactive buttons functionality
         document.getElementById('ourMissionButton').addEventListener('click', (e) => {
             e.preventDefault();
-            document.body.classList.add('color-shift');
             openPopup('missionPopup');
-            setTimeout(() => {
-                document.body.classList.remove('color-shift');
-            }, 500);
         });
 
         document.getElementById('freeConsultationButton').addEventListener('click', (e) => {
             e.preventDefault();
-            document.body.style.filter = 
-                document.body.style.filter === 'invert(1)' ? 'none' : 'invert(1)';
             openPopup('consultationPopup');
         });
 
         // Popup functionality
         function openPopup(popupId) {
             document.getElementById(popupId).classList.add('active');
+            if (popupId === 'missionPopup') {
+                // Pause any playing videos
+                if (player) {
+                    player.pauseVideo();
+                }
+            }
         }
 
         function closePopup(popupId) {
             document.getElementById(popupId).classList.remove('active');
+            if (popupId === 'missionPopup') {
+                if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                    player.pauseVideo();
+                }
+                document.body.style.filter = 'none'; // Revert color inversion
+            }
+            if (popupId === 'consultationPopup') {
+                // Additional actions if needed when closing consultation popup
+            }
         }
 
         document.getElementById('closeMissionPopup').addEventListener('click', () => {
@@ -425,9 +492,18 @@
             closePopup('consultationPopup');
         });
 
+        // Handle form submission (basic example)
+        document.getElementById('consultationForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Here you can add code to handle form submission, e.g., send data to a server
+            alert('Thank you for reaching out! We will respond ASAP to help identify the best strategy for your business.');
+            document.getElementById('consultationForm').reset();
+            closePopup('consultationPopup');
+        });
+
         // Video control for invert colors
         let player;
-        const videoIframe = document.getElementById('promoVideo');
+        const missionVideoIframe = document.getElementById('missionVideo');
 
         // Load YouTube IFrame API
         const tag = document.createElement('script');
@@ -436,7 +512,7 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('promoVideo', {
+            player = new YT.Player('missionVideo', {
                 events: {
                     'onStateChange': onPlayerStateChange
                 }
