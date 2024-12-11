@@ -1,1225 +1,225 @@
-<!DOCTYPE html>
+// Add this to the existing script section, after the device orientation code
 
-<html lang=”en”>
 
-<head>
 
-    <meta charset=”UTF-8”>
+// Form handling
 
-    <meta name=”viewport” content=”width=device-width, initial-scale=1.0”>
+const consultationBtn = document.getElementById('colorShift');
 
-    <title>Clear Seas Solutions</title>
+const aboutUsBtn = document.getElementById('invertColors');
 
-    <link href=https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;700;900&display=swap rel=”stylesheet”>
+const modalOverlay = document.querySelector('.modal-overlay');
 
-    <style>
+const consultationForm = document.querySelector('.consultation-form');
 
-        :root {
+const closeModal = document.querySelector('.close-modal');
 
-            --neon-pink: #ff71ce;
+const form = document.getElementById('consultationForm');
 
-            --neon-blue: #01cdfe;
+const successMessage = document.querySelector('.success-message');
 
-            --neon-purple: #b967ff;
 
-            --neon-green: #05ffa1;
 
-            --background-dark: #01012b;
+consultationBtn.addEventListener('click', () => {
 
-        }
+    modalOverlay.classList.add('active');
 
+    consultationForm.classList.add('active');
 
+});
 
-•	{
 
-Margin: 0;
 
-            Padding: 0;
+const closeConsultationForm = () => {
 
-            Box-sizing: border-box;
+    modalOverlay.classList.remove('active');
 
-        }
+    consultationForm.classList.remove('active');
 
+};
 
 
-        Body {
 
-            Background-color: var(--background-dark);
+closeModal.addEventListener('click', closeConsultationForm);
 
-            Color: white;
+modalOverlay.addEventListener('click', (e) => {
 
-            Font-family: ‘Orbitron’, sans-serif;
+    if (e.target === modalOverlay) {
 
-            Overflow-x: hidden;
-
-            Min-height: 500vh;
-
-        }
-
-
-
-        .background-container {
-
-            Position: fixed;
-
-            Top: 0;
-
-            Left: 0;
-
-            Width: 100%;
-
-            Height: 100%;
-
-            Background: linear-gradient(45deg, var(--background-dark) 0%, #2b0147 50%, var(--background-dark) 100%);
-
-            Transition: all 0.5s ease;
-
-            z-index: -2;
-
-        }
-
-
-
-        .grid-overlay {
-
-            Position: fixed;
-
-            Width: 200%;
-
-            Height: 300vh;
-
-            Top: -100vh;
-
-            Left: -50%;
-
-            Background: linear-gradient(transparent 0%, rgba(1, 205, 254, 0.5) 75%, var(--neon-blue) 100%);
-
-            Transform: rotateX(45deg);
-
-            Animation: moveGrid 20s linear infinite;
-
-            z-index: -1;
-
-        }
-
-
-
-        .sun {
-
-            Position: fixed;
-
-            Width: 200px;
-
-            Height: 200px;
-
-            Background: linear-gradient(to right, var(--neon-pink), var(--neon-purple));
-
-            Border-radius: 50%;
-
-            Top: 10vh;
-
-            Left: 50%;
-
-            Transform: translateX(-50%);
-
-            Box-shadow: 0 0 50px var(--neon-pink), 0 0 100px var(--neon-purple);
-
-            z-index: -1;
-
-            transition: all 0.3s ease;
-
-        }
-
-
-
-        .content-container {
-
-            Position: fixed;
-
-            Top: 0;
-
-            Left: 0;
-
-            Width: 100%;
-
-            Height: 100vh;
-
-            Display: flex;
-
-            Flex-direction: column;
-
-            Justify-content: center;
-
-            Align-items: center;
-
-            Padding: 2rem;
-
-            z-index: 1;
-
-        }
-
-
-
-        .company-name {
-
-            Font-family: ‘Audiowide’, cursive;
-
-            Font-size: clamp(2.5rem, 8vw, 5rem);
-
-            Margin-bottom: 1.5rem;
-
-            Text-align: center;
-
-            Color: white;
-
-            Text-shadow: 0 0 10px var(--neon-pink),
-
-                         0 0 20px var(--neon-pink),
-
-                         0 0 30px var(--neon-purple),
-
-                         0 0 40px var(--neon-purple);
-
-            Animation: textGlow 2s ease-in-out infinite alternate;
-
-        }
-
-
-
-        .tagline {
-
-            Font-size: clamp(1rem, 4vw, 1.5rem);
-
-            Text-align: center;
-
-            Color: var(--neon-blue);
-
-            Text-shadow: 0 0 10px var(--neon-blue);
-
-            Margin-bottom: 3rem;
-
-            Opacity: 0.9;
-
-        }
-
-
-
-        .button-container {
-
-            Display: flex;
-
-            Gap: 2rem;
-
-            Margin-top: 2rem;
-
-        }
-
-
-
-        .interactive-button {
-
-            Background: rgba(255, 255, 255, 0.1);
-
-            Border: 2px solid var(--neon-blue);
-
-            Padding: 1rem 2rem;
-
-            Border-radius: 30px;
-
-            Color: white;
-
-            Font-family: ‘Orbitron’, sans-serif;
-
-            Font-size: 1rem;
-
-            Cursor: pointer;
-
-            Transition: all 0.3s ease;
-
-            Text-transform: uppercase;
-
-            Letter-spacing: 2px;
-
-        }
-
-
-
-        .interactive-button:hover {
-
-            Background: var(--neon-blue);
-
-            Box-shadow: 0 0 20px var(--neon-blue);
-
-            Transform: translateY(-2px);
-
-        }
-
-
-
-        .modal-overlay {
-
-            Position: fixed;
-
-            Top: 0;
-
-            Left: 0;
-
-            Width: 100%;
-
-            Height: 100%;
-
-            Background: rgba(1, 1, 43, 0.95);
-
-            Backdrop-filter: blur(10px);
-
-            z-index: 100;
-
-            opacity: 0;
-
-            visibility: hidden;
-
-            transition: all 0.3s ease;
-
-        }
-
-
-
-        .consultation-form {
-
-            Position: fixed;
-
-            Top: 50%;
-
-            Left: 50%;
-
-            Transform: translate(-50%, -50%) scale(0.9);
-
-            Background: linear-gradient(135deg, rgba(255, 113, 206, 0.1), rgba(1, 205, 254, 0.1));
-
-            Border: 2px solid var(--neon-blue);
-
-            Border-radius: 20px;
-
-            Padding: 2.5rem;
-
-            Width: 90%;
-
-            Max-width: 500px;
-
-            Opacity: 0;
-
-            Visibility: hidden;
-
-            Transition: all 0.3s ease;
-
-            z-index: 101;
-
-        }
-
-
-
-        .modal-overlay.active,
-
-        .consultation-form.active {
-
-            Opacity: 1;
-
-            Visibility: visible;
-
-        }
-
-
-
-        .consultation-form.active {
-
-            Transform: translate(-50%, -50%) scale(1);
-
-        }
-
-
-
-        .form-group {
-
-            Margin-bottom: 1.5rem;
-
-        }
-
-
-
-        .form-group label {
-
-            Display: block;
-
-            Color: var(--neon-pink);
-
-            Margin-bottom: 0.5rem;
-
-            Font-size: 0.9rem;
-
-            Text-transform: uppercase;
-
-            Letter-spacing: 1px;
-
-        }
-
-
-
-        .form-group input,
-
-        .form-group textarea {
-
-            Width: 100%;
-
-            Background: rgba(1, 1, 43, 0.5);
-
-            Border: 1px solid var(--neon-blue);
-
-            Border-radius: 10px;
-
-            Padding: 0.8rem;
-
-            Color: white;
-
-            Font-family: ‘Orbitron’, sans-serif;
-
-            Font-size: 1rem;
-
-            Transition: all 0.3s ease;
-
-        }
-
-
-
-        .form-group input:focus,
-
-        .form-group textarea:focus {
-
-            Outline: none;
-
-            Border-color: var(--neon-pink);
-
-            Box-shadow: 0 0 15px rgba(255, 113, 206, 0.3);
-
-        }
-
-
-
-        .close-modal {
-
-            Position: absolute;
-
-            Top: 1rem;
-
-            Right: 1rem;
-
-            Background: none;
-
-            Border: none;
-
-            Color: var(--neon-pink);
-
-            Font-size: 1.5rem;
-
-            Cursor: pointer;
-
-            Transition: all 0.3s ease;
-
-        }
-
-
-
-        .close-modal:hover {
-
-            Color: var(--neon-blue);
-
-            Transform: rotate(90deg);
-
-        }
-
-
-
-        .submit-btn {
-
-            Background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
-
-            Border: none;
-
-            Padding: 1rem 2rem;
-
-            Border-radius: 25px;
-
-            Color: white;
-
-            Font-family: ‘Orbitron’, sans-serif;
-
-            Font-size: 1rem;
-
-            Cursor: pointer;
-
-            Transition: all 0.3s ease;
-
-            Text-transform: uppercase;
-
-            Letter-spacing: 1px;
-
-            Width: 100%;
-
-        }
-
-
-
-        .submit-btn:hover {
-
-            Transform: translateY(-2px);
-
-            Box-shadow: 0 0 25px rgba(185, 103, 255, 0.5);
-
-        }
-
-
-
-        .success-message {
-
-            Position: fixed;
-
-            Top: 50%;
-
-            Left: 50%;
-
-            Transform: translate(-50%, -50%);
-
-            Background: rgba(5, 255, 161, 0.1);
-
-            Border: 2px solid var(--neon-green);
-
-            Padding: 2rem;
-
-            Border-radius: 10px;
-
-            Text-align: center;
-
-            z-index: 102;
-
-            opacity: 0;
-
-            visibility: hidden;
-
-            transition: all 0.3s ease;
-
-        }
-
-
-
-        .success-message.active {
-
-            Opacity: 1;
-
-            Visibility: visible;
-
-        }
-
-
-
-        @keyframes textGlow {
-
-            0% { text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 30px var(--neon-purple); }
-
-            100% { text-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink), 0 0 60px var(--neon-purple), 0 0 80px var(--neon-purple); }
-
-        }
-
-
-
-        @keyframes moveGrid {
-
-            0% { transform: rotateX(45deg) translateY(0); }
-
-            100% { transform: rotateX(45deg) translateY(100vh); }
-
-        }
-
-
-
-        @media (max-width: 768px) {
-
-            .button-container {
-
-                Flex-direction: column;
-
-                Gap: 1rem;
-
-                Width: 100%;
-
-                Max-width: 300px;
-
-            }
-
-
-
-            .interactive-button {
-
-                Width: 100%;
-
-            }
-
-        }
-
-       .video-container {
-
-        position: relative;
-
-        width: 80%;
-
-        max-width: 800px;
-
-        margin: 2rem auto;
-
-        border-radius: 10px;
-
-        overflow: hidden;
-
-        box-shadow: 0 0 30px rgba(1, 205, 254, 0.3);
-
-        transform: translateY(-20px);
+        closeConsultationForm();
 
     }
 
+});
 
 
-    .video-container::before {
 
-        content: '';
+form.addEventListener('submit', (e) => {
 
-        display: block;
+    e.preventDefault();
 
-        padding-top: 56.25%; /* 16:9 Aspect Ratio */
-
-    }
-
-
-
-    .video-container iframe {
-
-        position: absolute;
-
-        top: 0;
-
-        left: 0;
-
-        width: 100%;
-
-        height: 100%;
-
-        border: none;
-
-        border-radius: 10px;
-
-    }
-
-
-
-    .button-container {
-
-        position: fixed;
-
-        bottom: 5%;
-
-        left: 50%;
-
-        transform: translateX(-50%);
-
-        display: flex;
-
-        gap: 2rem;
-
-        z-index: 10;
-
-    }
-
-
-
-    .particle {
-
-        position: fixed;
-
-        pointer-events: none;
-
-        border-radius: 50%;
-
-        z-index: 9;
-
-    }
-
-
-
-    @keyframes particleAnimation {
-
-        0% {
-
-            transform: scale(1) rotate(0deg);
-
-            opacity: 1;
-
-        }
-
-        100% {
-
-            transform: scale(0) rotate(360deg);
-
-            opacity: 0;
-
-        }
-
-    }
-
-
-
-    /* Add geometric shapes for particle effects */
-
-    .geometric-particle {
-
-        position: absolute;
-
-        pointer-events: none;
-
-        width: 10px;
-
-        height: 10px;
-
-        background: var(--neon-blue);
-
-        clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-
-    }
-
-
-
-    .geometric-particle.square {
-
-        clip-path: none;
-
-    }
-
-
-
-    .geometric-particle.circle {
-
-        border-radius: 50%;
-
-    }
-
-
-
-    .geometric-particle.triangle {
-
-        clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-
-    }
-
-
-
-    /* Adjust content container for video */
-
-    .content-container {
-
-        gap: 2rem;
-
-        padding-bottom: 150px;
-
-    }
-
-</style>
-
- </style>
-
-</head>
-
-<body>
-
-    <div class=”background-container”></div>
-
-    <div class=”grid-overlay”></div>
-
-    <div class=”sun”></div>
+    closeConsultationForm();
 
     
 
-    <div class=”content-container”>
+    // Show success message
 
-        <h1 class=”company-name”>Clear Seas Solutions</h1>
+    successMessage.classList.add('active');
 
-        <p class=”tagline”>AI Solutions to Level the Playing Field</p>
+    setTimeout(() => {
 
-<div class=”content-container”>
+        successMessage.classList.remove('active');
 
-    <h1 class=”company-name”>Clear Seas Solutions</h1>
-
-    <p class=”tagline”>AI Solutions to Level the Playing Field</p>
+    }, 3000);
 
     
 
-    <div class=”video-container”>
+    // Here you would typically send the form data to your server
 
-        <iframe
+    console.log('Form submitted:', {
 
-            Id=”promo-video”
+        name: form.querySelector('input[type="text"]').value,
 
-            Src=https://www.youtube.com/embed/bxSvG2s8e-o?enablejsapi=1
+        email: form.querySelector('input[type="email"]').value,
 
-            Title=”Clear Seas Solutions”
+        phone: form.querySelector('input[type="tel"]').value,
 
-            Allow=”accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture”
-
-            Allowfullscreen>
-
-        </iframe>
-
-    </div>
-
-</div>
-
-
-
-        <div class=”button-container”>
-
-            <button class=”interactive-button” id=”colorShift”>Free Consultation</button>
-
-            <button class=”interactive-button” id=”invertColors”>About Us</button>
-
-        </div>
-
-    </div>
-
-
-
-    <div class=”modal-overlay”></div>
-
-
-
-    <div class=”consultation-form”>
-
-        <button class=”close-modal”>&times;</button>
-
-        <h2 style=”color: var(--neon-blue); margin-bottom: 1.5rem; text-align: center; font-size: 1.5rem;”>Free Consultation</h2>
-
-        <form id=”consultationForm”>
-
-            <div class=”form-group”>
-
-                <label>Name</label>
-
-                <input type=”text” required>
-
-            </div>
-
-            <div class=”form-group”>
-
-                <label>Email</label>
-
-                <input type=”email” required>
-
-            </div>
-
-            <div class=”form-group”>
-
-                <label>Phone (Optional)</label>
-
-                <input type=”tel”>
-
-            </div>
-
-            <div class=”form-group”>
-
-                <label>Message</label>
-
-                <textarea rows=”4” required></textarea>
-
-            </div>
-
-            <button type=”submit” class=”submit-btn”>Send Message</button>
-
-        </form>
-
-    </div>
-
-
-
-    <div class=”success-message”>
-
-        <h3 style=”color: var(--neon-green); margin-bottom: 0.5rem;”>Message Sent!</h3>
-
-        <p>We’ll get back to you soon.</p>
-
-    </div>
-
-<script src="https://www.youtube.com/iframe_api"></script>
-
-<script>
-
-    // YouTube Player Integration
-
-    let player;
-
-    function onYouTubeIframeAPIReady() {
-
-        player = new YT.Player('promo-video', {
-
-            events: {
-
-                'onStateChange': onPlayerStateChange
-
-            }
-
-        });
-
-    }
-
-
-
-    function onPlayerStateChange(event) {
-
-        if (event.data == YT.PlayerState.PLAYING) {
-
-            document.body.style.filter = 'invert(1)';
-
-        } else {
-
-            document.body.style.filter = 'none';
-
-        }
-
-    }
-
-
-
-    // Particle Effect System
-
-    function createParticles(x, y, type) {
-
-        const colors = [
-
-            'var(--neon-pink)',
-
-            'var(--neon-blue)',
-
-            'var(--neon-purple)',
-
-            'var(--neon-green)'
-
-        ];
-
-        
-
-        const shapes = ['square', 'circle', 'triangle'];
-
-        
-
-        for (let i = 0; i < 20; i++) {
-
-            const particle = document.createElement('div');
-
-            particle.className = `geometric-particle ${shapes[Math.floor(Math.random() * shapes.length)]}`;
-
-            
-
-            const size = Math.random() * 20 + 10;
-
-            const angle = (Math.random() * 360) * (Math.PI / 180);
-
-            const velocity = Math.random() * 5 + 2;
-
-            const color = colors[Math.floor(Math.random() * colors.length)];
-
-            
-
-            particle.style.width = `${size}px`;
-
-            particle.style.height = `${size}px`;
-
-            particle.style.backgroundColor = color;
-
-            particle.style.left = `${x}px`;
-
-            particle.style.top = `${y}px`;
-
-            
-
-            document.body.appendChild(particle);
-
-            
-
-            const animation = particle.animate([
-
-                {
-
-                    transform: `translate(0, 0) rotate(0deg)`,
-
-                    opacity: 1
-
-                },
-
-                {
-
-                    transform: `translate(${Math.cos(angle) * 100 * velocity}px, 
-
-                                ${Math.sin(angle) * 100 * velocity}px) 
-
-                                rotate(${360 * velocity}deg)`,
-
-                    opacity: 0
-
-                }
-
-            ], {
-
-                duration: Math.random() * 1000 + 1000,
-
-                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-
-            });
-
-            
-
-            animation.onfinish = () => particle.remove();
-
-        }
-
-    }
-
-
-
-    // Modify button click handlers
-
-    consultationBtn.addEventListener('click', (e) => {
-
-        createParticles(e.clientX, e.clientY, 'consultation');
-
-        modalOverlay.classList.add('active');
-
-        consultationForm.classList.add('active');
+        message: form.querySelector('textarea').value
 
     });
 
+    
 
+    form.reset();
 
-    aboutUsBtn.addEventListener('click', (e) => {
+});
 
-        createParticles(e.clientX, e.clientY, 'about');
 
-        document.body.style.filter = 
 
-            document.body.style.filter === 'invert(1)' ? 'none' : 'invert(1)';
+// Scroll-based background changes
 
-    });
+let lastScrollPosition = 0;
 
+const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
 
 
-    <script>
 
-        // Form handling
+window.addEventListener('scroll', () => {
 
-        Const consultationBtn = document.getElementById(‘colorShift’);
+    const scrollPosition = window.scrollY;
 
-        Const aboutUsBtn = document.getElementById(‘invertColors’);
+    const scrollProgress = (scrollPosition / maxScroll) * 100;
 
-        Const modalOverlay = document.querySelector(‘.modal-overlay’);
+    
 
-        Const consultationForm = document.querySelector(‘.consultation-form’);
+    // Calculate background colors based on scroll position
 
-        Const closeModal = document.querySelector(‘.close-modal’);
+    const background = document.querySelector('.background-container');
 
-        Const form = document.getElementById(‘consultationForm’);
+    
 
-        Const successMessage = document.querySelector(‘.success-message’);
+    if (scrollProgress < 33) {
 
+        background.style.background = `linear-gradient(45deg, 
 
+            var(--background-dark) ${scrollProgress}%, 
 
-        consultationBtn.addEventListener(‘click’, () => {
+            #2b0147 ${50 + scrollProgress}%, 
 
-            modalOverlay.classList.add(‘active’);
+            var(--background-dark) 100%)`;
 
-            consultationForm.classList.add(‘active’);
+    } else if (scrollProgress < 66) {
 
-        });
+        background.style.background = `linear-gradient(45deg, 
 
+            #2b0147 ${scrollProgress - 33}%, 
 
+            #1f0f4c ${50 + scrollProgress - 33}%, 
 
-        Const closeConsultationForm = () => {
+            #2b0147 100%)`;
 
-            modalOverlay.classList.remove(‘active’);
+    } else {
 
-            consultationForm.classList.remove(‘active’);
+        background.style.background = `linear-gradient(45deg, 
 
-        };
+            #1f0f4c ${scrollProgress - 66}%, 
 
+            var(--background-dark) ${50 + scrollProgress - 66}%, 
 
+            #1f0f4c 100%)`;
 
-        closeModal.addEventListener(‘click’, closeConsultationForm);
+    }
 
-        modalOverlay.addEventListener(‘click’, € => {
+    
 
-            if (e.target === modalOverlay) {
+    lastScrollPosition = scrollPosition;
 
-                closeConsultationForm();
+});
 
-            }
 
-        });
 
+// About Us button (placeholder for video functionality)
 
+aboutUsBtn.addEventListener('click', () => {
 
-        Form.addEventListener(‘submit’, € => {
+    document.body.style.filter = 
 
-            e.preventDefault();
+        document.body.style.filter === 'invert(1)' ? 'none' : 'invert(1)';
 
-            closeConsultationForm();
+    // Video popup functionality to be added later
 
-            
+});
 
-            successMessage.classList.add(‘active’);
 
-            setTimeout(() => {
 
-                successMessage.classList.remove(‘active’);
+// Touch drag effect for sun
 
-            }, 3000);
+const sun = document.querySelector('.sun');
 
-            
+let isDragging = false;
 
-            Console.log(‘Form submitted:’, {
+let startY;
 
-                Name: form.querySelector(‘input[type=”text”]’).value,
 
-                Email: form.querySelector(‘input[type=”email”]’).value,
 
-                Phone: form.querySelector(‘input[type=”tel”]’).value,
+document.addEventListener('touchstart', (e) => {
 
-                Message: form.querySelector(‘textarea’).value
+    isDragging = true;
 
-            });
+    startY = e.touches[0].clientY;
 
-            
+});
 
-            Form.reset();
 
-        });
 
+document.addEventListener('touchmove', (e) => {
 
+    if (!isDragging) return;
 
-        // Scroll-based background changes
+    
 
-        Let lastScrollPosition = 0;
+    const deltaY = e.touches[0].clientY - startY;
 
-        Const maxScroll = document.documentElement.scrollHeight – window.innerHeight;
+    const newPosition = Math.max(10, Math.min(90, 10 + (deltaY / window.innerHeight) * 100));
 
+    sun.style.top = `${newPosition}vh`;
 
+    
 
-        Window.addEventListener(‘scroll’, () => {
+    // Adjust grid perspective based on sun position
 
-            Const scrollPosition = window.scrollY;
+    const gridRotation = 45 + (deltaY / window.innerHeight) * 20;
 
-            Const scrollProgress = (scrollPosition / maxScroll) * 100;
+    document.querySelector('.grid-overlay').style.transform = 
 
-            
+        `rotateX(${gridRotation}deg)`;
 
-            Const background = document.querySelector(‘.background-container’);
+});
 
-            
 
-            If (scrollProgress < 33) {
 
-                Background.style.background = `linear-gradient(45deg, 
+document.addEventListener('touchend', () => {
 
-                    Var(--background-dark) ${scrollProgress}%, 
+    isDragging = false;
 
-                    #2b0147 ${50 + scrollProgress}%, 
-
-                    Var(--background-dark) 100%)`;
-
-            } else if (scrollProgress < 66) {
-
-                Background.style.background = `linear-gradient(45deg, 
-
-                    #2b0147 ${scrollProgress – 33}%, 
-
-                    #1f0f4c ${50 + scrollProgress – 33}%, 
-
-                    #2b0147 100%)`;
-
-            } else {
-
-                Background.style.background = `linear-gradient(45deg, 
-
-                    #1f0f4c ${scrollProgress – 66}%, 
-
-                    Var(--background-dark) ${50 + scrollProgress – 66}%, 
-
-                    #1f0f4c 100%)`;
-
-            }
-
-            
-
-            lastScrollPosition = scrollPosition;
-
-        });
-
-
-
-        // About Us button
-
-        aboutUsBtn.addEventListener(‘click’, () => {
-
-            document.body.style.filter = document.body.style.filter === ‘invert(1)’ ? ‘none’ : ‘invert(1)’;
-
-        });
-
-
-
-        // Sun drag effect
-
-        Const sun = document.querySelector(‘.sun’);
-
-        Let isDragging = false;
-
-        Let startY;
-
-
-
-        Document.addEventListener(‘touchstart’, € => {
-
-            isDragging = true;
-
-            startY = e.touches[0].clientY;
-
-        });
-
-
-
-        Document.addEventListener(‘touchmove’, € => {
-
-            If (!isDragging) return;
-
-            
-
-            Const deltaY = e.touches[0].clientY – startY;
-
-            Const newPosition = Math.max(10, Math.min(90, 10 + (deltaY / window.innerHeight) * 100));
-
-            Sun.style.top = `${newPosition}vh`;
-
-            
-
-            Const gridRotation = 45<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Clear Seas Solutions</title>
-
-    <link href="https://fonts.googleapis.
+});
