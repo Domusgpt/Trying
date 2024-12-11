@@ -1,225 +1,359 @@
-// Add this to the existing script section, after the device orientation code
-
-
-
-// Form handling
-
-const consultationBtn = document.getElementById('colorShift');
-
-const aboutUsBtn = document.getElementById('invertColors');
-
-const modalOverlay = document.querySelector('.modal-overlay');
-
-const consultationForm = document.querySelector('.consultation-form');
-
-const closeModal = document.querySelector('.close-modal');
-
-const form = document.getElementById('consultationForm');
-
-const successMessage = document.querySelector('.success-message');
-
-
-
-consultationBtn.addEventListener('click', () => {
-
-    modalOverlay.classList.add('active');
-
-    consultationForm.classList.add('active');
-
-});
-
-
-
-const closeConsultationForm = () => {
-
-    modalOverlay.classList.remove('active');
-
-    consultationForm.classList.remove('active');
-
-};
-
-
-
-closeModal.addEventListener('click', closeConsultationForm);
-
-modalOverlay.addEventListener('click', (e) => {
-
-    if (e.target === modalOverlay) {
-
-        closeConsultationForm();
-
-    }
-
-});
-
-
-
-form.addEventListener('submit', (e) => {
-
-    e.preventDefault();
-
-    closeConsultationForm();
-
-    
-
-    // Show success message
-
-    successMessage.classList.add('active');
-
-    setTimeout(() => {
-
-        successMessage.classList.remove('active');
-
-    }, 3000);
-
-    
-
-    // Here you would typically send the form data to your server
-
-    console.log('Form submitted:', {
-
-        name: form.querySelector('input[type="text"]').value,
-
-        email: form.querySelector('input[type="email"]').value,
-
-        phone: form.querySelector('input[type="tel"]').value,
-
-        message: form.querySelector('textarea').value
-
-    });
-
-    
-
-    form.reset();
-
-});
-
-
-
-// Scroll-based background changes
-
-let lastScrollPosition = 0;
-
-const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-
-
-
-window.addEventListener('scroll', () => {
-
-    const scrollPosition = window.scrollY;
-
-    const scrollProgress = (scrollPosition / maxScroll) * 100;
-
-    
-
-    // Calculate background colors based on scroll position
-
-    const background = document.querySelector('.background-container');
-
-    
-
-    if (scrollProgress < 33) {
-
-        background.style.background = `linear-gradient(45deg, 
-
-            var(--background-dark) ${scrollProgress}%, 
-
-            #2b0147 ${50 + scrollProgress}%, 
-
-            var(--background-dark) 100%)`;
-
-    } else if (scrollProgress < 66) {
-
-        background.style.background = `linear-gradient(45deg, 
-
-            #2b0147 ${scrollProgress - 33}%, 
-
-            #1f0f4c ${50 + scrollProgress - 33}%, 
-
-            #2b0147 100%)`;
-
-    } else {
-
-        background.style.background = `linear-gradient(45deg, 
-
-            #1f0f4c ${scrollProgress - 66}%, 
-
-            var(--background-dark) ${50 + scrollProgress - 66}%, 
-
-            #1f0f4c 100%)`;
-
-    }
-
-    
-
-    lastScrollPosition = scrollPosition;
-
-});
-
-
-
-// About Us button (placeholder for video functionality)
-
-aboutUsBtn.addEventListener('click', () => {
-
-    document.body.style.filter = 
-
-        document.body.style.filter === 'invert(1)' ? 'none' : 'invert(1)';
-
-    // Video popup functionality to be added later
-
-});
-
-
-
-// Touch drag effect for sun
-
-const sun = document.querySelector('.sun');
-
-let isDragging = false;
-
-let startY;
-
-
-
-document.addEventListener('touchstart', (e) => {
-
-    isDragging = true;
-
-    startY = e.touches[0].clientY;
-
-});
-
-
-
-document.addEventListener('touchmove', (e) => {
-
-    if (!isDragging) return;
-
-    
-
-    const deltaY = e.touches[0].clientY - startY;
-
-    const newPosition = Math.max(10, Math.min(90, 10 + (deltaY / window.innerHeight) * 100));
-
-    sun.style.top = `${newPosition}vh`;
-
-    
-
-    // Adjust grid perspective based on sun position
-
-    const gridRotation = 45 + (deltaY / window.innerHeight) * 20;
-
-    document.querySelector('.grid-overlay').style.transform = 
-
-        `rotateX(${gridRotation}deg)`;
-
-});
-
-
-
-document.addEventListener('touchend', () => {
-
-    isDragging = false;
-
-});
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Seas Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;700;900&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --neon-pink: #ff71ce;
+            --neon-blue: #01cdfe;
+            --neon-green: #05ffa1;
+            --neon-purple: #b967ff;
+            --background-dark: #01012b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            perspective: 1000px;
+        }
+
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                var(--background-dark) 0%,
+                #2b0147 50%,
+                var(--background-dark) 100%
+            );
+            transition: all 0.5s ease;
+            z-index: -2;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            width: 200%;
+            height: 300vh;
+            top: -100vh;
+            left: -50%;
+            background: 
+                linear-gradient(transparent 0%, 
+                rgba(1, 205, 254, 0.5) 75%, 
+                var(--neon-blue) 100%);
+            transform: rotateX(45deg);
+            animation: moveGrid 20s linear infinite;
+            z-index: -1;
+        }
+
+        .sun {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(to right, var(--neon-pink), var(--neon-purple));
+            border-radius: 50%;
+            top: 10vh;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 
+                0 0 50px var(--neon-pink),
+                0 0 100px var(--neon-purple);
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        .header-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        .company-name {
+            font-family: 'Audiowide', cursive;
+            font-size: min(8vw, 80px);
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow:
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink),
+                0 0 30px var(--neon-purple),
+                0 0 40px var(--neon-purple);
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        .tagline {
+            font-family: 'Orbitron', sans-serif;
+            font-size: min(4vw, 24px);
+            color: var(--neon-blue);
+            text-shadow:
+                0 0 10px var(--neon-blue),
+                0 0 20px var(--neon-blue);
+            opacity: 0.8;
+        }
+
+        .touch-indicator {
+            position: fixed;
+            pointer-events: none;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-pink);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            z-index: 1000;
+        }
+
+        .color-shift {
+            animation: colorShift 0.5s ease-out forwards;
+        }
+
+        @keyframes textGlow {
+            0% {
+                text-shadow:
+                    0 0 10px var(--neon-pink),
+                    0 0 20px var(--neon-pink),
+                    0 0 30px var(--neon-purple);
+            }
+            100% {
+                text-shadow:
+                    0 0 20px var(--neon-pink),
+                    0 0 40px var(--neon-pink),
+                    0 0 60px var(--neon-purple),
+                    0 0 80px var(--neon-purple);
+            }
+        }
+
+        @keyframes moveGrid {
+            0% { transform: rotateX(45deg) translateY(0); }
+            100% { transform: rotateX(45deg) translateY(100vh); }
+        }
+
+        @keyframes colorShift {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(180deg); }
+        }
+
+        .interactive-elements {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .interactive-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--neon-blue);
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-button:hover {
+            background: var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .tilt-box {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .parallax-element {
+                transition: transform 0.2s ease;
+            }
+        }
+
+        .hidden {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .reveal {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="tilt-box">
+        <div class="background-container"></div>
+        <div class="grid-overlay"></div>
+        <div class="sun parallax-element"></div>
+        
+        <div class="header-container parallax-element">
+            <h1 class="company-name">Clear Seas Solutions</h1>
+            <p class="tagline">AI Solutions to Level the Playing Field</p>
+        </div>
+    </div>
+
+    <div class="touch-indicator"></div>
+
+    <div class="interactive-elements">
+        <button class="interactive-button" id="colorShift">Shift Colors</button>
+        <button class="interactive-button" id="invertColors">Invert Theme</button>
+    </div>
+
+    <script>
+        // Touch effect system
+        function createTouchRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.className = 'touch-indicator';
+            document.body.appendChild(ripple);
+
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.opacity = '1';
+            ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+            
+            ripple.animate([
+                { transform: 'translate(-50%, -50%) scale(0)', opacity: 1 },
+                { transform: 'translate(-50%, -50%) scale(1)', opacity: 0 }
+            ], {
+                duration: 700,
+                easing: 'ease-out'
+            }).onfinish = () => ripple.remove();
+        }
+
+        document.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            createTouchRipple(touch.clientX, touch.clientY);
+        });
+
+        // Motion parallax effect
+        let gyroEnabled = false;
+        const tiltBox = document.querySelector('.tilt-box');
+        const parallaxElements = document.querySelectorAll('.parallax-element');
+
+        function handleDeviceOrientation(event) {
+            if (!gyroEnabled) return;
+            
+            const tiltX = event.beta / 45; // -1 to 1 based on tilt
+            const tiltY = event.gamma / 45;
+
+            tiltBox.style.transform = `rotateX(${-tiltX * 10}deg) rotateY(${tiltY * 10}deg)`;
+            
+            parallaxElements.forEach(element => {
+                element.style.transform = `translate(${tiltY * 20}px, ${tiltX * 20}px)`;
+            });
+        }
+
+        // Request device motion/orientation permission on iOS
+        document.addEventListener('click', async () => {
+            if (typeof DeviceOrientationEvent !== 'undefined' && 
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission === 'granted') {
+                        gyroEnabled = true;
+                        window.addEventListener('deviceorientation', handleDeviceOrientation);
+                    }
+                } catch (error) {
+                    console.error('Error requesting device orientation permission:', error);
+                }
+            } else if (window.DeviceOrientationEvent) {
+                gyroEnabled = true;
+                window.addEventListener('deviceorientation', handleDeviceOrientation);
+            }
+        });
+
+        // Scroll-based background color shift
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            const scrollDelta = window.scrollY - lastScrollY;
+            const hue = (window.scrollY % 360);
+            document.querySelector('.background-container')
+                .style.filter = `hue-rotate(${hue}deg)`;
+            lastScrollY = window.scrollY;
+        });
+
+        // Interactive buttons
+        document.getElementById('colorShift').addEventListener('click', () => {
+            document.body.classList.add('color-shift');
+            setTimeout(() => {
+                document.body.classList.remove('color-shift');
+            }, 500);
+        });
+
+        document.getElementById('invertColors').addEventListener('click', () => {
+            document.body.style.filter = 
+                document.body.style.filter === 'invert(1)' ? 'none' : 'invert(1)';
+        });
+
+        // Touch drag effect for sun
+        const sun = document.querySelector('.sun');
+        let isDragging = false;
+        let startY;
+
+        document.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaY = e.touches[0].clientY - startY;
+            const newPosition = Math.max(10, Math.min(90, 10 + (deltaY / window.innerHeight) * 100));
+            sun.style.top = `${newPosition}vh`;
+            
+            // Adjust grid perspective based on sun position
+            const gridRotation = 45 + (deltaY / window.innerHeight) * 20;
+            document.querySelector('.grid-overlay').style.transform = 
+                `rotateX(${gridRotation}deg)`;
+        });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Reveal elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.hidden').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
