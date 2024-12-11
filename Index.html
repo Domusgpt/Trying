@@ -1,11 +1,70 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Clear Seas Solutions - AI Solutions to Level the Playing Field">
     <title>Clear Seas Solutions</title>
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;700;900&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <script>
+        const ASSETS_CONFIG = {
+            images: {
+                baseUrl: '/assets/images/',
+                formats: ['webp', 'jpg'],
+                compression: {
+                    webp: 80,
+                    jpg: 85
+                }
+            },
+            videos: {
+                baseUrl: '/assets/videos/',
+                formats: ['mp4', 'webm'],
+                quality: {
+                    high: '1080p',
+                    medium: '720p',
+                    low: '480p'
+                }
+            },
+            preloadAssets: [
+                'background-texture',
+                'logo',
+                'hero-pattern'
+            ]
+        };
+
+        class AssetLoader {
+            static async loadImage(name, options = {}) {
+                const { format = 'webp', fallback = true } = options;
+                try {
+                    const image = new Image();
+                    image.src = `${ASSETS_CONFIG.images.baseUrl}${name}.${format}`;
+                    await image.decode();
+                    return image;
+                } catch (error) {
+                    console.warn(`Failed to load ${format} image:`, error);
+                    if (fallback && format === 'webp') {
+                        return this.loadImage(name, { format: 'jpg', fallback: false });
+                    }
+                    throw error;
+                }
+            }
+
+            static preloadCriticalAssets() {
+                return Promise.allSettled(
+                    ASSETS_CONFIG.preloadAssets.map(asset => 
+                        this.loadImage(asset)
+                    )
+                );
+            }
+        }
+    </script>
+
     <style>
         :root {
             --neon-pink: #ff71ce;
@@ -56,10 +115,11 @@
             height: 300vh;
             top: -100vh;
             left: -50%;
-            background: 
-                linear-gradient(transparent 0%, 
-                rgba(1, 205, 254, 0.5) 75%, 
-                var(--neon-blue) 100%);
+            background: linear-gradient(
+                transparent 0%,
+                rgba(1, 205, 254, 0.5) 75%,
+                var(--neon-blue) 100%
+            );
             transform: rotateX(45deg);
             animation: moveGrid 20s linear infinite;
             z-index: -1;
@@ -74,9 +134,8 @@
             top: 10vh;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 
-                0 0 50px var(--neon-pink),
-                0 0 100px var(--neon-purple);
+            box-shadow: 0 0 50px var(--neon-pink),
+                       0 0 100px var(--neon-purple);
             z-index: -1;
             transition: all 0.3s ease;
         }
@@ -97,11 +156,10 @@
             font-size: min(8vw, 80px);
             margin-bottom: 1rem;
             color: white;
-            text-shadow:
-                0 0 10px var(--neon-pink),
-                0 0 20px var(--neon-pink),
-                0 0 30px var(--neon-purple),
-                0 0 40px var(--neon-purple);
+            text-shadow: 0 0 10px var(--neon-pink),
+                        0 0 20px var(--neon-pink),
+                        0 0 30px var(--neon-purple),
+                        0 0 40px var(--neon-purple);
             animation: textGlow 2s ease-in-out infinite alternate;
         }
 
@@ -109,63 +167,44 @@
             font-family: 'Orbitron', sans-serif;
             font-size: min(4vw, 24px);
             color: var(--neon-blue);
-            text-shadow:
-                0 0 10px var(--neon-blue),
-                0 0 20px var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue),
+                        0 0 20px var(--neon-blue);
             opacity: 0.8;
         }
 
-        .touch-indicator {
-            position: fixed;
-            pointer-events: none;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 2px solid var(--neon-pink);
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            z-index: 1000;
+        .video-container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(1, 205, 254, 0.3);
         }
 
-        .color-shift {
-            animation: colorShift 0.5s ease-out forwards;
+        .video-container::before {
+            content: '';
+            display: block;
+            padding-top: 56.25%;
         }
 
-        @keyframes textGlow {
-            0% {
-                text-shadow:
-                    0 0 10px var(--neon-pink),
-                    0 0 20px var(--neon-pink),
-                    0 0 30px var(--neon-purple);
-            }
-            100% {
-                text-shadow:
-                    0 0 20px var(--neon-pink),
-                    0 0 40px var(--neon-pink),
-                    0 0 60px var(--neon-purple),
-                    0 0 80px var(--neon-purple);
-            }
-        }
-
-        @keyframes moveGrid {
-            0% { transform: rotateX(45deg) translateY(0); }
-            100% { transform: rotateX(45deg) translateY(100vh); }
-        }
-
-        @keyframes colorShift {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(180deg); }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .interactive-elements {
-            position: relative;
-            width: 100%;
+            position: fixed;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-            margin-top: 100vh; /* Ensure buttons require scrolling */
-            z-index: 1;
+            gap: 2rem;
+            z-index: 10;
         }
 
         .interactive-button {
@@ -177,401 +216,342 @@
             font-family: 'Orbitron', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9em;
         }
 
         .interactive-button:hover {
             background: var(--neon-blue);
             box-shadow: 0 0 20px var(--neon-blue);
+            transform: translateY(-2px);
         }
 
-        .tilt-box {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease;
-        }
-
-        @media (prefers-reduced-motion: no-preference) {
-            .parallax-element {
-                transition: transform 0.2s ease;
-            }
-        }
-
-        .hidden {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .reveal {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.8s ease;
-        }
-
-        /* Popup Styles */
         .popup {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--popup-background);
-            padding: 30px;
-            border: 2px solid var(--popup-border);
-            border-radius: 10px;
-            box-shadow: 0 0 20px var(--neon-blue);
-            display: none;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border: 2px solid var(--neon-blue);
+            border-radius: 15px;
+            box-shadow: 0 0 20px var(--neon-blue),
+                       inset 0 0 20px rgba(1, 205, 254, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1001;
             width: 90%;
             max-width: 600px;
-            overflow-y: auto;
             max-height: 90vh;
+            overflow-y: auto;
         }
 
         .popup.active {
-            display: block;
-            animation: fadeIn 0.5s forwards;
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
         }
 
-        .popup-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+        @keyframes textGlow {
+            0% {
+                text-shadow: 0 0 10px var(--neon-pink),
+                           0 0 20px var(--neon-pink),
+                           0 0 30px var(--neon-purple);
+            }
+            100% {
+                text-shadow: 0 0 20px var(--neon-pink),
+                           0 0 40px var(--neon-pink),
+                           0 0 60px var(--neon-purple),
+                           0 0 80px var(--neon-purple);
+            }
         }
 
-        .popup-header h2 {
-            margin: 0;
-            font-size: 1.8em;
-            color: var(--neon-blue);
+        @keyframes moveGrid {
+            0% { transform: rotateX(45deg) translateY(0); }
+            100% { transform: rotateX(45deg) translateY(100vh); }
         }
 
-        .close-popup {
-            background: none;
-            border: none;
-            color: var(--neon-pink);
-            font-size: 2em;
-            cursor: pointer;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, -60%); }
-            to { opacity: 1; transform: translate(-50%, -50%); }
-        }
-
-        .popup-content {
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-
-        /* Contact Form Styles */
-        .contact-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .contact-form input,
-        .contact-form textarea {
-            padding: 10px;
-            border: 2px solid var(--neon-blue);
-            border-radius: 5px;
-            background: transparent;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1em;
-            resize: vertical;
-        }
-
-        .contact-form input::placeholder,
-        .contact-form textarea::placeholder {
-            color: #aaa;
-        }
-
-        .contact-form button {
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            background: var(--neon-blue);
-            color: white;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .contact-form button:hover {
-            background: var(--neon-purple);
-        }
-
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .company-name {
-                font-size: min(10vw, 60px);
+            .interactive-elements {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
             }
 
-            .tagline {
-                font-size: min(5vw, 20px);
-            }
-
-            .interactive-button {
-                padding: 12px 25px;
-                font-size: 0.9em;
-            }
-
-            .popup-header h2 {
-                font-size: 1.5em;
+            .popup {
+                width: 95%;
+                padding: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="tilt-box">
-        <div class="background-container"></div>
-        <div class="grid-overlay"></div>
-        <div class="sun parallax-element"></div>
-        
-        <div class="header-container parallax-element">
-            <h1 class="company-name">Clear Seas Solutions</h1>
-            <p class="tagline">AI Solutions to Level the Playing Field</p>
-        </div>
+    <div class="background-container"></div>
+    <div class="grid-overlay"></div>
+    <div class="sun"></div>
+
+    <div class="header-container">
+        <h1 class="company-name">Clear Seas Solutions</h1>
+        <p class="tagline">AI Solutions to Level the Playing Field</p>
+    </div>
+
+    <div class="video-container">
+        <iframe id="promo-video" src="https://www.youtube.com/embed/bxSvG2s8e-o?enablejsapi=1" 
+                title="Clear Seas Solutions" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+        </iframe>
     </div>
 
     <div class="interactive-elements">
-        <a href="#our-mission" class="interactive-button" id="ourMissionButton">Our Mission</a>
-        <a href="#free-consultation" class="interactive-button" id="freeConsultationButton">Free Consultation</a>
+        <button class="interactive-button" id="ourMissionBtn">Our Mission</button>
+        <button class="interactive-button" id="freeConsultationBtn">Free Consultation</button>
     </div>
 
-    <!-- Popup for Our Mission -->
     <div class="popup" id="missionPopup">
         <div class="popup-header">
             <h2>Our Mission</h2>
-            <button class="close-popup" id="closeMissionPopup">&times;</button>
+            <button class="close-popup">&times;</button>
         </div>
         <div class="popup-content">
-            <p>At Clear Seas Solutions, our mission is to provide innovative AI solutions that empower businesses to achieve their goals efficiently and effectively. We strive to level the playing field by making cutting-edge technology accessible to all.</p>
-            <div class="video-container">
-                <iframe id="missionVideo" src="https://www.youtube.com/embed/bxSvG2s8e-o?enablejsapi=1" title="Our Mission Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
+            <p>At Clear Seas Solutions, we're dedicated to democratizing AI technology, making powerful solutions accessible to businesses of all sizes. Our mission is to level the playing field through innovative AI implementations that drive real results.</p>
         </div>
     </div>
 
-    <!-- Popup for Free Consultation -->
     <div class="popup" id="consultationPopup">
         <div class="popup-header">
             <h2>Free Consultation</h2>
-            <button class="close-popup" id="closeConsultationPopup">&times;</button>
+            <button class="close-popup">&times;</button>
         </div>
         <div class="popup-content">
-            <p>Interested in our services? Schedule a free consultation with our experts to discuss how Clear Seas Solutions can help your business thrive. We will respond ASAP to help identify the best strategy for using AI resources aligned with your business goals and industry placement.</p>
-            <form class="contact-form" id="consultationForm">
-                <input type="text" id="name" name="name" placeholder="Your Name" required>
-                <input type="email" id="email" name="email" placeholder="Your Email" required>
-                <textarea id="message" name="message" rows="4" placeholder="Your Message" required></textarea>
-                <button type="submit">Submit</button>
+            <p>Ready to transform your business with AI? Let's discuss how we can help you achieve your goals.</p>
+            <form id="consultationForm" class="contact-form">
+                <div class="form-group">
+                    <input type="text" id="name" required>
+                    <label for="name">Your Name</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" required>
+                    <label for="email">Your Email</label>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" rows="4" required></textarea>
+                    <label for="message">Your Message</label>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
             </form>
         </div>
     </div>
-
-    <div class="touch-indicator"></div>
-
-    <script>
-        // Touch effect system
-        function createTouchRipple(x, y) {
-            const ripple = document.createElement('div');
-            ripple.className = 'touch-indicator';
-            document.body.appendChild(ripple);
-
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            ripple.style.opacity = '1';
-            ripple.style.transform = 'translate(-50%, -50%) scale(0)';
-            
-            ripple.animate([
-                { transform: 'translate(-50%, -50%) scale(0)', opacity: 1 },
-                { transform: 'translate(-50%, -50%) scale(1)', opacity: 0 }
-            ], {
-                duration: 700,
-                easing: 'ease-out'
-            }).onfinish = () => ripple.remove();
+    // Asset Configuration and Loading System
+const ASSETS_CONFIG = {
+    images: {
+        baseUrl: '/assets/images/',
+        formats: ['webp', 'jpg'],
+        compression: {
+            webp: 80,
+            jpg: 85
         }
-
-        document.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            createTouchRipple(touch.clientX, touch.clientY);
-        });
-
-        // Motion parallax effect
-        let gyroEnabled = false;
-        const tiltBox = document.querySelector('.tilt-box');
-        const parallaxElements = document.querySelectorAll('.parallax-element');
-
-        function handleDeviceOrientation(event) {
-            if (!gyroEnabled) return;
-            
-            const tiltX = event.beta / 45; // -1 to 1 based on tilt
-            const tiltY = event.gamma / 45;
-
-            tiltBox.style.transform = `rotateX(${-tiltX * 10}deg) rotateY(${tiltY * 10}deg)`;
-            
-            parallaxElements.forEach(element => {
-                element.style.transform = `translate(${tiltY * 20}px, ${tiltX * 20}px)`;
-            });
+    },
+    videos: {
+        baseUrl: '/assets/videos/',
+        formats: ['mp4', 'webm'],
+        quality: {
+            high: '1080p',
+            medium: '720p',
+            low: '480p'
         }
+    },
+    preloadAssets: [
+        'background-texture',
+        'logo',
+        'hero-pattern'
+    ]
+};
 
-        // Request device motion/orientation permission on iOS
-        document.addEventListener('click', async () => {
-            if (typeof DeviceOrientationEvent !== 'undefined' && 
-                typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission === 'granted') {
-                        gyroEnabled = true;
-                        window.addEventListener('deviceorientation', handleDeviceOrientation);
-                    }
-                } catch (error) {
-                    console.error('Error requesting device orientation permission:', error);
-                }
-            } else if (window.DeviceOrientationEvent) {
-                gyroEnabled = true;
-                window.addEventListener('deviceorientation', handleDeviceOrientation);
+class AssetLoader {
+    static async loadImage(name, options = {}) {
+        const { format = 'webp', fallback = true } = options;
+        try {
+            const image = new Image();
+            image.src = `${ASSETS_CONFIG.images.baseUrl}${name}.${format}`;
+            await image.decode();
+            return image;
+        } catch (error) {
+            console.warn(`Failed to load ${format} image:`, error);
+            if (fallback && format === 'webp') {
+                return this.loadImage(name, { format: 'jpg', fallback: false });
             }
-        });
-
-        // Scroll-based background color shift
-        let lastScrollY = window.scrollY;
-        window.addEventListener('scroll', () => {
-            const hue = (window.scrollY % 360);
-            document.querySelector('.background-container')
-                .style.filter = `hue-rotate(${hue}deg)`;
-            lastScrollY = window.scrollY;
-        });
-
-        // Interactive buttons functionality
-        document.getElementById('ourMissionButton').addEventListener('click', (e) => {
-            e.preventDefault();
-            openPopup('missionPopup');
-        });
-
-        document.getElementById('freeConsultationButton').addEventListener('click', (e) => {
-            e.preventDefault();
-            openPopup('consultationPopup');
-        });
-
-        // Popup functionality
-        function openPopup(popupId) {
-            document.getElementById(popupId).classList.add('active');
-            if (popupId === 'missionPopup') {
-                // Pause any playing videos
-                if (player) {
-                    player.pauseVideo();
-                }
-            }
+            throw error;
         }
+    }
 
-        function closePopup(popupId) {
-            document.getElementById(popupId).classList.remove('active');
-            if (popupId === 'missionPopup') {
-                if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                    player.pauseVideo();
-                }
-                document.body.style.filter = 'none'; // Revert color inversion
-            }
-            if (popupId === 'consultationPopup') {
-                // Additional actions if needed when closing consultation popup
-            }
+    static preloadCriticalAssets() {
+        return Promise.allSettled(
+            ASSETS_CONFIG.preloadAssets.map(asset => 
+                this.loadImage(asset)
+            )
+        );
+    }
+}
+
+// YouTube Player Integration
+let player;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('promo-video', {
+        events: {
+            'onStateChange': onPlayerStateChange,
+            'onError': onPlayerError
         }
+    });
+}
 
-        document.getElementById('closeMissionPopup').addEventListener('click', () => {
-            closePopup('missionPopup');
-        });
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING) {
+        document.body.style.filter = 'invert(1)';
+        createParticleEffect();
+    } else {
+        document.body.style.filter = 'none';
+    }
+}
 
-        document.getElementById('closeConsultationPopup').addEventListener('click', () => {
-            closePopup('consultationPopup');
-        });
+function onPlayerError(event) {
+    console.error('YouTube Player Error:', event.data);
+}
 
-        // Handle form submission (basic example)
-        document.getElementById('consultationForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Here you can add code to handle form submission, e.g., send data to a server
-            alert('Thank you for reaching out! We will respond ASAP to help identify the best strategy for your business.');
-            document.getElementById('consultationForm').reset();
-            closePopup('consultationPopup');
-        });
+// Particle Effect System
+function createParticleEffect() {
+    const colors = [
+        'var(--neon-pink)',
+        'var(--neon-blue)',
+        'var(--neon-purple)',
+        'var(--neon-green)'
+    ];
 
-        // Video control for invert colors
-        let player;
-        const missionVideoIframe = document.getElementById('missionVideo');
-
-        // Load YouTube IFrame API
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('missionVideo', {
-                events: {
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING) {
-                document.body.style.filter = 'invert(1)';
-            } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
-                document.body.style.filter = 'none';
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        const size = Math.random() * 5 + 2;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = color;
+        
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 2 + 1;
+        const startX = window.innerWidth / 2;
+        const startY = window.innerHeight / 2;
+        
+        particle.style.left = `${startX}px`;
+        particle.style.top = `${startY}px`;
+        
+        document.body.appendChild(particle);
+        
+        const animation = particle.animate([
+            {
+                transform: 'translate(0, 0) scale(1)',
+                opacity: 1
+            },
+            {
+                transform: `translate(${Math.cos(angle) * 200 * velocity}px, 
+                            ${Math.sin(angle) * 200 * velocity}px) scale(0)`,
+                opacity: 0
             }
-        }
-
-        // Ensure the onYouTubeIframeAPIReady function is globally accessible
-        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-
-        // Touch drag effect for sun
-        const sun = document.querySelector('.sun');
-        let isDragging = false;
-        let startY;
-
-        document.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            startY = e.touches[0].clientY;
+        ], {
+            duration: Math.random() * 1000 + 1000,
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
         });
+        
+        animation.onfinish = () => particle.remove();
+    }
+}
 
-        document.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            
-            const deltaY = e.touches[0].clientY - startY;
-            const newPosition = Math.max(10, Math.min(90, 10 + (deltaY / window.innerHeight) * 100));
-            sun.style.top = `${newPosition}vh`;
-            
-            // Adjust grid perspective based on sun position
-            const gridRotation = 45 + (deltaY / window.innerHeight) * 20;
-            document.querySelector('.grid-overlay').style.transform = 
-                `rotateX(${gridRotation}deg)`;
-        });
+// Popup Management
+const missionBtn = document.getElementById('ourMissionBtn');
+const consultationBtn = document.getElementById('freeConsultationBtn');
+const missionPopup = document.getElementById('missionPopup');
+const consultationPopup = document.getElementById('consultationPopup');
+const closeButtons = document.querySelectorAll('.close-popup');
+const form = document.getElementById('consultationForm');
 
-        document.addEventListener('touchend', () => {
-            isDragging = false;
-        });
+function openPopup(popup) {
+    popup.classList.add('active');
+    createParticleEffect();
+}
 
-        // Reveal elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+function closePopup(popup) {
+    popup.classList.remove('active');
+}
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('reveal');
-                }
-            });
-        }, observerOptions);
+missionBtn.addEventListener('click', () => openPopup(missionPopup));
+consultationBtn.addEventListener('click', () => openPopup(consultationPopup));
 
-        document.querySelectorAll('.hidden').forEach(el => observer.observe(el));
-    </script>
-</body>
-</html>
+closeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        closePopup(button.closest('.popup'));
+    });
+});
+
+// Form Handling with Validation
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+        name: form.querySelector('#name').value,
+        email: form.querySelector('#email').value,
+        message: form.querySelector('#message').value
+    };
+
+    try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        console.log('Form submitted:', formData);
+        
+        // Show success message
+        const successMessage = document.createElement('div');
+        successMessage.className = 'success-message';
+        successMessage.innerHTML = '<h3>Message Sent!</h3><p>We\'ll get back to you soon.</p>';
+        document.body.appendChild(successMessage);
+        
+        setTimeout(() => {
+            successMessage.remove();
+            closePopup(consultationPopup);
+            form.reset();
+        }, 3000);
+        
+    } catch (error) {
+        console.error('Form submission error:', error);
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'error-message';
+        errorMessage.textContent = 'Something went wrong. Please try again.';
+        form.appendChild(errorMessage);
+        
+        setTimeout(() => errorMessage.remove(), 3000);
+    }
+});
+
+// Background Color Shift on Scroll
+let lastScrollPosition = 0;
+window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollProgress = (currentScroll / maxScroll) * 100;
+    
+    const background = document.querySelector('.background-container');
+    const hue = (scrollProgress * 3.6) % 360; // Convert percentage to degrees
+    
+    background.style.filter = `hue-rotate(${hue}deg)`;
+    lastScrollPosition = currentScroll;
+});
+
+// Initialize on Load
+window.addEventListener('load', () => {
+    AssetLoader.preloadCriticalAssets()
+        .then(() => console.log('Critical assets loaded'))
+        .catch(error => console.warn('Asset loading error:', error));
+});
