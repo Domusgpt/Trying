@@ -163,6 +163,7 @@
             justify-content: center;
             gap: 20px;
             padding: 20px;
+            z-index: 1;
         }
 
         .interactive-button {
@@ -174,11 +175,31 @@
             font-family: 'Orbitron', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .interactive-button:hover {
             background: var(--neon-blue);
             box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px 50px 20px;
+            z-index: 1;
+        }
+
+        .video-container iframe {
+            width: 80%;
+            max-width: 800px;
+            height: 450px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px var(--neon-blue);
+            transition: filter 0.3s ease;
         }
 
         .tilt-box {
@@ -205,6 +226,54 @@
             transform: translateY(0);
             transition: all 0.8s ease;
         }
+
+        /* Popup Styles */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--background-dark);
+            padding: 30px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--neon-blue);
+            display: none;
+            z-index: 1001;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .popup.active {
+            display: block;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .popup-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: var(--neon-blue);
+        }
+
+        .close-popup {
+            background: none;
+            border: none;
+            color: var(--neon-pink);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
     </style>
 </head>
 <body>
@@ -219,12 +288,35 @@
         </div>
     </div>
 
-    <div class="touch-indicator"></div>
+    <div class="video-container">
+        <iframe id="promoVideo" src="https://www.youtube.com/embed/bxSvG2s8e-o?enablejsapi=1" title="Promotional Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
 
     <div class="interactive-elements">
-        <button class="interactive-button" id="colorShift">Shift Colors</button>
-        <button class="interactive-button" id="invertColors">Invert Theme</button>
+        <a href="#our-mission" class="interactive-button" id="ourMissionButton">Our Mission</a>
+        <a href="#free-consultation" class="interactive-button" id="freeConsultationButton">Free Consultation</a>
     </div>
+
+    <!-- Popup for Our Mission -->
+    <div class="popup" id="missionPopup">
+        <div class="popup-header">
+            <h2>Our Mission</h2>
+            <button class="close-popup" id="closeMissionPopup">&times;</button>
+        </div>
+        <p>At Clear Seas Solutions, our mission is to provide innovative AI solutions that empower businesses to achieve their goals efficiently and effectively. We strive to level the playing field by making cutting-edge technology accessible to all.</p>
+    </div>
+
+    <!-- Popup for Free Consultation -->
+    <div class="popup" id="consultationPopup">
+        <div class="popup-header">
+            <h2>Free Consultation</h2>
+            <button class="close-popup" id="closeConsultationPopup">&times;</button>
+        </div>
+        <p>Interested in our services? Schedule a free consultation with our experts to discuss how Clear Seas Solutions can help your business thrive.</p>
+        <!-- You can add a form here -->
+    </div>
+
+    <div class="touch-indicator"></div>
 
     <script>
         // Touch effect system
@@ -299,18 +391,68 @@
             lastScrollY = window.scrollY;
         });
 
-        // Interactive buttons
-        document.getElementById('colorShift').addEventListener('click', () => {
+        // Interactive buttons functionality
+        document.getElementById('ourMissionButton').addEventListener('click', (e) => {
+            e.preventDefault();
             document.body.classList.add('color-shift');
+            openPopup('missionPopup');
             setTimeout(() => {
                 document.body.classList.remove('color-shift');
             }, 500);
         });
 
-        document.getElementById('invertColors').addEventListener('click', () => {
+        document.getElementById('freeConsultationButton').addEventListener('click', (e) => {
+            e.preventDefault();
             document.body.style.filter = 
                 document.body.style.filter === 'invert(1)' ? 'none' : 'invert(1)';
+            openPopup('consultationPopup');
         });
+
+        // Popup functionality
+        function openPopup(popupId) {
+            document.getElementById(popupId).classList.add('active');
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).classList.remove('active');
+        }
+
+        document.getElementById('closeMissionPopup').addEventListener('click', () => {
+            closePopup('missionPopup');
+        });
+
+        document.getElementById('closeConsultationPopup').addEventListener('click', () => {
+            closePopup('consultationPopup');
+        });
+
+        // Video control for invert colors
+        let player;
+        const videoIframe = document.getElementById('promoVideo');
+
+        // Load YouTube IFrame API
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('promoVideo', {
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING) {
+                document.body.style.filter = 'invert(1)';
+            } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
+                document.body.style.filter = 'none';
+            }
+        }
+
+        // Ensure the onYouTubeIframeAPIReady function is globally accessible
+        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 
         // Touch drag effect for sun
         const sun = document.querySelector('.sun');
