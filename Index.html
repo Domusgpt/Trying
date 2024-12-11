@@ -1,86 +1,29 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Clear Seas Solutions - AI Solutions to Level the Playing Field">
     <title>Clear Seas Solutions</title>
     
-    <!-- Preload critical assets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
-    <script>
-        const ASSETS_CONFIG = {
-            images: {
-                baseUrl: '/assets/images/',
-                formats: ['webp', 'jpg'],
-                compression: {
-                    webp: 80,
-                    jpg: 85
-                }
-            },
-            videos: {
-                baseUrl: '/assets/videos/',
-                formats: ['mp4', 'webm'],
-                quality: {
-                    high: '1080p',
-                    medium: '720p',
-                    low: '480p'
-                }
-            },
-            preloadAssets: [
-                'background-texture',
-                'logo',
-                'hero-pattern'
-            ]
-        };
-
-        class AssetLoader {
-            static async loadImage(name, options = {}) {
-                const { format = 'webp', fallback = true } = options;
-                try {
-                    const image = new Image();
-                    image.src = `${ASSETS_CONFIG.images.baseUrl}${name}.${format}`;
-                    await image.decode();
-                    return image;
-                } catch (error) {
-                    console.warn(`Failed to load ${format} image:`, error);
-                    if (fallback && format === 'webp') {
-                        return this.loadImage(name, { format: 'jpg', fallback: false });
-                    }
-                    throw error;
-                }
-            }
-
-            static preloadCriticalAssets() {
-                return Promise.allSettled(
-                    ASSETS_CONFIG.preloadAssets.map(asset => 
-                        this.loadImage(asset)
-                    )
-                );
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
+            --neon-turquoise: #00f5d4;
             --neon-pink: #ff71ce;
             --neon-blue: #01cdfe;
             --neon-green: #05ffa1;
             --neon-purple: #b967ff;
             --background-dark: #01012b;
-            --popup-background: #1a1a2e;
-            --popup-border: #0f3460;
+            --deep-sea: #000428;
+            --royal-blue: #004e92;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -89,7 +32,6 @@
             font-family: 'Orbitron', sans-serif;
             overflow-x: hidden;
             min-height: 100vh;
-            perspective: 1000px;
             transition: filter 0.3s ease;
         }
 
@@ -99,12 +41,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                45deg,
-                var(--background-dark) 0%,
-                #2b0147 50%,
-                var(--background-dark) 100%
-            );
+            background: linear-gradient(45deg, var(--deep-sea) 0%, var(--royal-blue) 100%);
             transition: all 0.5s ease;
             z-index: -2;
         }
@@ -115,158 +52,192 @@
             height: 300vh;
             top: -100vh;
             left: -50%;
-            background: linear-gradient(
-                transparent 0%,
-                rgba(1, 205, 254, 0.5) 75%,
-                var(--neon-blue) 100%
-            );
+            background: linear-gradient(transparent 0%, rgba(0, 245, 212, 0.3) 75%, var(--neon-turquoise) 100%);
             transform: rotateX(45deg);
             animation: moveGrid 20s linear infinite;
             z-index: -1;
         }
 
-        .sun {
-            position: fixed;
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(to right, var(--neon-pink), var(--neon-purple));
-            border-radius: 50%;
-            top: 10vh;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 0 50px var(--neon-pink),
-                       0 0 100px var(--neon-purple);
-            z-index: -1;
-            transition: all 0.3s ease;
-        }
-
-        .header-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
+        .content-wrapper {
+            position: relative;
             width: 100%;
-            padding: 20px;
-            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
         }
 
         .company-name {
-            font-family: 'Audiowide', cursive;
-            font-size: min(8vw, 80px);
-            margin-bottom: 1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: clamp(3rem, 8vw, 5rem);
+            text-align: center;
             color: white;
-            text-shadow: 0 0 10px var(--neon-pink),
-                        0 0 20px var(--neon-pink),
-                        0 0 30px var(--neon-purple),
-                        0 0 40px var(--neon-purple);
+            text-shadow: 
+                0 0 10px var(--neon-turquoise),
+                0 0 20px var(--neon-turquoise),
+                0 0 30px var(--neon-blue),
+                0 0 40px var(--neon-blue),
+                0 0 70px var(--neon-purple);
             animation: textGlow 2s ease-in-out infinite alternate;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
         }
 
         .tagline {
             font-family: 'Orbitron', sans-serif;
-            font-size: min(4vw, 24px);
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue),
-                        0 0 20px var(--neon-blue);
-            opacity: 0.8;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            text-align: center;
+            color: var(--neon-turquoise);
+            text-shadow: 0 0 10px var(--neon-turquoise);
+            margin-bottom: 3rem;
         }
 
         .video-container {
-            position: relative;
-            width: 80%;
+            width: 90%;
             max-width: 800px;
-            margin: 2rem auto;
+            aspect-ratio: 16/9;
+            background: rgba(0, 4, 40, 0.3);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(1, 205, 254, 0.3);
+            box-shadow: 0 0 30px rgba(0, 245, 212, 0.3);
+            margin: 2rem 0;
+            border: 2px solid var(--neon-turquoise);
         }
 
-        .video-container::before {
-            content: '';
-            display: block;
-            padding-top: 56.25%;
+        .button-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
-        .video-container iframe {
-            position: absolute;
+        .interactive-button {
+            background: rgba(0, 245, 212, 0.1);
+            border: 2px solid var(--neon-turquoise);
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .interactive-button:hover {
+            background: var(--neon-turquoise);
+            box-shadow: 0 0 20px var(--neon-turquoise);
+            transform: translateY(-2px);
+            color: var(--background-dark);
+        }
+
+        .modal {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border: none;
-        }
-
-        .interactive-elements {
-            position: fixed;
-            bottom: 5%;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 2rem;
-            z-index: 10;
-        }
-
-        .interactive-button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--neon-blue);
-            padding: 15px 30px;
-            border-radius: 30px;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9em;
-        }
-
-        .interactive-button:hover {
-            background: var(--neon-blue);
-            box-shadow: 0 0 20px var(--neon-blue);
-            transform: translateY(-2px);
-        }
-
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.95);
-            background: rgba(26, 26, 46, 0.95);
+            background: rgba(0, 4, 40, 0.9);
             backdrop-filter: blur(10px);
-            padding: 2rem;
-            border: 2px solid var(--neon-blue);
-            border-radius: 15px;
-            box-shadow: 0 0 20px var(--neon-blue),
-                       inset 0 0 20px rgba(1, 205, 254, 0.3);
+            z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1001;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .popup.active {
+        .modal.active {
             opacity: 1;
             visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(0, 245, 212, 0.1), rgba(1, 205, 254, 0.1));
+            border: 2px solid var(--neon-turquoise);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--neon-turquoise);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+            color: var(--neon-pink);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: rgba(0, 4, 40, 0.3);
+            border: 2px solid var(--neon-turquoise);
+            border-radius: 8px;
+            padding: 1rem;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .form-group label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            color: var(--neon-turquoise);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-group input:focus ~ label,
+        .form-group textarea:focus ~ label,
+        .form-group input:not(:placeholder-shown) ~ label,
+        .form-group textarea:not(:placeholder-shown) ~ label {
+            transform: translateY(-1.5rem) scale(0.8);
+        }
+
+        .success-message {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(5, 255, 161, 0.1);
+            border: 2px solid var(--neon-green);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .success-message.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         @keyframes textGlow {
-            0% {
-                text-shadow: 0 0 10px var(--neon-pink),
-                           0 0 20px var(--neon-pink),
-                           0 0 30px var(--neon-purple);
-            }
-            100% {
-                text-shadow: 0 0 20px var(--neon-pink),
-                           0 0 40px var(--neon-pink),
-                           0 0 60px var(--neon-purple),
-                           0 0 80px var(--neon-purple);
-            }
+            0% { text-shadow: 0 0 10px var(--neon-turquoise), 0 0 20px var(--neon-turquoise), 0 0 30px var(--neon-blue); }
+            100% { text-shadow: 0 0 20px var(--neon-turquoise), 0 0 40px var(--neon-turquoise), 0 0 60px var(--neon-blue), 0 0 80px var(--neon-purple); }
         }
 
         @keyframes moveGrid {
@@ -275,15 +246,13 @@
         }
 
         @media (max-width: 768px) {
-            .interactive-elements {
+            .button-container {
                 flex-direction: column;
                 gap: 1rem;
-                padding: 1rem;
             }
-
-            .popup {
-                width: 95%;
-                padding: 1.5rem;
+            
+            .interactive-button {
+                width: 100%;
             }
         }
     </style>
@@ -291,267 +260,161 @@
 <body>
     <div class="background-container"></div>
     <div class="grid-overlay"></div>
-    <div class="sun"></div>
 
-    <div class="header-container">
+    <div class="content-wrapper">
         <h1 class="company-name">Clear Seas Solutions</h1>
         <p class="tagline">AI Solutions to Level the Playing Field</p>
-    </div>
 
-    <div class="video-container">
-        <iframe id="promo-video" src="https://www.youtube.com/embed/bxSvG2s8e-o?enablejsapi=1" 
-                title="Clear Seas Solutions" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-        </iframe>
-    </div>
-
-    <div class="interactive-elements">
-        <button class="interactive-button" id="ourMissionBtn">Our Mission</button>
-        <button class="interactive-button" id="freeConsultationBtn">Free Consultation</button>
-    </div>
-
-    <div class="popup" id="missionPopup">
-        <div class="popup-header">
-            <h2>Our Mission</h2>
-            <button class="close-popup">&times;</button>
+        <div class="video-container">
+            <div id="promo-video"></div>
         </div>
-        <div class="popup-content">
-            <p>At Clear Seas Solutions, we're dedicated to democratizing AI technology, making powerful solutions accessible to businesses of all sizes. Our mission is to level the playing field through innovative AI implementations that drive real results.</p>
+
+        <div class="button-container">
+            <button class="interactive-button" id="mission-btn">Our Mission</button>
+            <button class="interactive-button" id="consultation-btn">Free Consultation</button>
         </div>
     </div>
 
-    <div class="popup" id="consultationPopup">
-        <div class="popup-header">
-            <h2>Free Consultation</h2>
-            <button class="close-popup">&times;</button>
+    <div class="modal" id="mission-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2 style="color: var(--neon-turquoise); margin-bottom: 1rem;">Our Mission</h2>
+            <p>At Clear Seas Solutions, we're dedicated to democratizing AI technology, making powerful solutions accessible to businesses of all sizes.</p>
+            <div class="video-container">
+                <div id="mission-video"></div>
+            </div>
         </div>
-        <div class="popup-content">
-            <p>Ready to transform your business with AI? Let's discuss how we can help you achieve your goals.</p>
-            <form id="consultationForm" class="contact-form">
+    </div>
+
+    <div class="modal" id="consultation-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2 style="color: var(--neon-turquoise); margin-bottom: 1rem;">Free Consultation</h2>
+            <form id="consultation-form">
                 <div class="form-group">
-                    <input type="text" id="name" required>
+                    <input type="text" id="name" required placeholder=" ">
                     <label for="name">Your Name</label>
                 </div>
                 <div class="form-group">
-                    <input type="email" id="email" required>
+                    <input type="email" id="email" required placeholder=" ">
                     <label for="email">Your Email</label>
                 </div>
                 <div class="form-group">
-                    <textarea id="message" rows="4" required></textarea>
+                    <textarea id="message" rows="4" required placeholder=" "></textarea>
                     <label for="message">Your Message</label>
                 </div>
-                <button type="submit" class="submit-btn">Send Message</button>
+                <button type="submit" class="interactive-button">Send Message</button>
             </form>
         </div>
     </div>
-    // Asset Configuration and Loading System
-const ASSETS_CONFIG = {
-    images: {
-        baseUrl: '/assets/images/',
-        formats: ['webp', 'jpg'],
-        compression: {
-            webp: 80,
-            jpg: 85
-        }
-    },
-    videos: {
-        baseUrl: '/assets/videos/',
-        formats: ['mp4', 'webm'],
-        quality: {
-            high: '1080p',
-            medium: '720p',
-            low: '480p'
-        }
-    },
-    preloadAssets: [
-        'background-texture',
-        'logo',
-        'hero-pattern'
-    ]
-};
 
-class AssetLoader {
-    static async loadImage(name, options = {}) {
-        const { format = 'webp', fallback = true } = options;
-        try {
-            const image = new Image();
-            image.src = `${ASSETS_CONFIG.images.baseUrl}${name}.${format}`;
-            await image.decode();
-            return image;
-        } catch (error) {
-            console.warn(`Failed to load ${format} image:`, error);
-            if (fallback && format === 'webp') {
-                return this.loadImage(name, { format: 'jpg', fallback: false });
+    <div class="success-message">
+        <h3 style="color: var(--neon-green)">Message Sent!</h3>
+        <p>We'll get back to you soon.</p>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let mainPlayer, missionPlayer;
+        
+        function onYouTubeIframeAPIReady() {
+            mainPlayer = new YT.Player('promo-video', {
+                videoId: 'bxSvG2s8e-o',
+                playerVars: {
+                    'enablejsapi': 1,
+                    'autoplay': 0,
+                    'controls': 1,
+                    'modestbranding': 1,
+                    'rel': 0
+                },
+                events: {
+                    'onStateChange': onMainPlayerStateChange
+                }
+            });
+        }
+
+        function initMissionVideo() {
+            missionPlayer = new YT.Player('mission-video', {
+                videoId: 'bxSvG2s8e-o',
+                playerVars: {
+                    'enablejsapi': 1,
+                    'autoplay': 0,
+                    'controls': 1,
+                    'modestbranding': 1,
+                    'rel': 0
+                },
+                events: {
+                    'onStateChange': onMissionPlayerStateChange
+                }
+            });
+        }
+
+        function onMainPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                document.body.style.filter = 'invert(1)';
+            } else {
+                document.body.style.filter = 'none';
             }
-            throw error;
         }
-    }
 
-    static preloadCriticalAssets() {
-        return Promise.allSettled(
-            ASSETS_CONFIG.preloadAssets.map(asset => 
-                this.loadImage(asset)
-            )
-        );
-    }
-}
-
-// YouTube Player Integration
-let player;
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('promo-video', {
-        events: {
-            'onStateChange': onPlayerStateChange,
-            'onError': onPlayerError
-        }
-    });
-}
-
-function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PLAYING) {
-        document.body.style.filter = 'invert(1)';
-        createParticleEffect();
-    } else {
-        document.body.style.filter = 'none';
-    }
-}
-
-function onPlayerError(event) {
-    console.error('YouTube Player Error:', event.data);
-}
-
-// Particle Effect System
-function createParticleEffect() {
-    const colors = [
-        'var(--neon-pink)',
-        'var(--neon-blue)',
-        'var(--neon-purple)',
-        'var(--neon-green)'
-    ];
-
-    for (let i = 0; i < 50; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        const size = Math.random() * 5 + 2;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.backgroundColor = color;
-        
-        const angle = Math.random() * Math.PI * 2;
-        const velocity = Math.random() * 2 + 1;
-        const startX = window.innerWidth / 2;
-        const startY = window.innerHeight / 2;
-        
-        particle.style.left = `${startX}px`;
-        particle.style.top = `${startY}px`;
-        
-        document.body.appendChild(particle);
-        
-        const animation = particle.animate([
-            {
-                transform: 'translate(0, 0) scale(1)',
-                opacity: 1
-            },
-            {
-                transform: `translate(${Math.cos(angle) * 200 * velocity}px, 
-                            ${Math.sin(angle) * 200 * velocity}px) scale(0)`,
-                opacity: 0
+        function onMissionPlayerStateChange(event) {
+            const modal = document.getElementById('mission-modal');
+            if (event.data === YT.PlayerState.PLAYING) {
+                document.body.style.filter = 'invert(1)';
+                modal.style.filter = 'invert(0)';
+            } else {
+                document.body.style.filter = 'none';
+                modal.style.filter = 'none';
             }
-        ], {
-            duration: Math.random() * 1000 + 1000,
-            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        }
+
+        const missionBtn = document.getElementById('mission-btn');
+        const consultationBtn = document.getElementById('consultation-btn');
+        const missionModal = document.getElementById('mission-modal');
+        const consultationModal = document.getElementById('consultation-modal');
+        const closeButtons = document.querySelectorAll('.close-modal');
+        const form = document.getElementById('consultation-form');
+        const successMessage = document.querySelector('.success-message');
+
+        missionBtn.addEventListener('click', () => {
+            missionModal.classList.add('active');
+            if (!missionPlayer) {
+                initMissionVideo();
+            }
         });
-        
-        animation.onfinish = () => particle.remove();
-    }
-}
 
-// Popup Management
-const missionBtn = document.getElementById('ourMissionBtn');
-const consultationBtn = document.getElementById('freeConsultationBtn');
-const missionPopup = document.getElementById('missionPopup');
-const consultationPopup = document.getElementById('consultationPopup');
-const closeButtons = document.querySelectorAll('.close-popup');
-const form = document.getElementById('consultationForm');
+        consultationBtn.addEventListener('click', () => {
+            consultationModal.classList.add('active');
+        });
 
-function openPopup(popup) {
-    popup.classList.add('active');
-    createParticleEffect();
-}
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = button.closest('.modal');
+                modal.classList.remove('active');
+                if (modal === missionModal && missionPlayer) {
+                    missionPlayer.stopVideo();
+                }
+                document.body.style.filter = 'none';
+            });
+        });
 
-function closePopup(popup) {
-    popup.classList.remove('active');
-}
-
-missionBtn.addEventListener('click', () => openPopup(missionPopup));
-consultationBtn.addEventListener('click', () => openPopup(consultationPopup));
-
-closeButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        closePopup(button.closest('.popup'));
-    });
-});
-
-// Form Handling with Validation
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = {
-        name: form.querySelector('#name').value,
-        email: form.querySelector('#email').value,
-        message: form.querySelector('#message').value
-    };
-
-    try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        console.log('Form submitted:', formData);
-        
-        // Show success message
-        const successMessage = document.createElement('div');
-        successMessage.className = 'success-message';
-        successMessage.innerHTML = '<h3>Message Sent!</h3><p>We\'ll get back to you soon.</p>';
-        document.body.appendChild(successMessage);
-        
-        setTimeout(() => {
-            successMessage.remove();
-            closePopup(consultationPopup);
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            consultationModal.classList.remove('active');
+            successMessage.classList.add('active');
+            setTimeout(() => {
+                successMessage.classList.remove('active');
+            }, 3000);
             form.reset();
-        }, 3000);
-        
-    } catch (error) {
-        console.error('Form submission error:', error);
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'error-message';
-        errorMessage.textContent = 'Something went wrong. Please try again.';
-        form.appendChild(errorMessage);
-        
-        setTimeout(() => errorMessage.remove(), 3000);
-    }
-});
+        });
 
-// Background Color Shift on Scroll
-let lastScrollPosition = 0;
-window.addEventListener('scroll', () => {
-    const currentScroll = window.scrollY;
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollProgress = (currentScroll / maxScroll) * 100;
-    
-    const background = document.querySelector('.background-container');
-    const hue = (scrollProgress * 3.6) % 360; // Convert percentage to degrees
-    
-    background.style.filter = `hue-rotate(${hue}deg)`;
-    lastScrollPosition = currentScroll;
-});
-
-// Initialize on Load
-window.addEventListener('load', () => {
-    AssetLoader.preloadCriticalAssets()
-        .then(() => console.log('Critical assets loaded'))
-        .catch(error => console.warn('Asset loading error:', error));
-});
+        // Background color shift on scroll
+        window.addEventListener('scroll', () => {
+            const scrollProgress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            const background = document.querySelector('.background-container');
+            const hue = scrollProgress * 3.6;
+            background.style.filter = `hue-rotate(${hue}deg)`;
+        });
+    </script>
+</body>
+</html>
